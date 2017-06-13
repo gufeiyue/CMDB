@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% from '_pagination.html' import pagination_widget %}
+
+
+
+{% block admin_content %}
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <div class="col-lg-10">
+            <h2>Hosts Management</h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="{{ url_for('admin.index') }}">Dashbord</a>
+                </li>
+                <li class="active">
+                    <strong>All Hosts</strong>
+                </li>
+            </ol>
+        </div>
+        <div class="col-lg-2">
+
+        </div>
+    </div>
+
+    <div class="wrapper wrapper-content animated fadeInRight" style="margin: -10px -10px">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins" id="all">
+                    <div class="ibox-title">
+                        <h5> 主机详细信息列表</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="ibox-content">
+                        <form class="form-inline" method="post" action="">
+                            {{ form.hidden_tag() }}
+
+                            <div class="col-sm-8" style="padding-left: 0px">
+                                <label>
+                                    {{ form.env(class='form-control m-b input-sm', required='', id='env_id') }}
+                                </label>
+
+                                <label>
+                                    {{ form.used(class='form-control m-b input-sm', required='', id='used_id') }}
+                                </label>
+
+                                <label>
+                                    {{ form.verify(class='form-control m-b input-sm', required='', id='password_id') }}
+                                </label>
+
+                            </div>
+
+                            <div class="col-sm-4" style="padding-right: 0px">
+                                 <div class="input-group inline-group" style="float: right; padding-right: 0px">
+                                        {{ form.ip(class='form-control m-b input-sm', placeholder='Please enter ip or hostname', id='ip') }}
+                                    <div class="input-group-btn">
+                                        <button id="search_btn"  type="submit" class="btn btn-sm btn-primary search-btn">
+                                            - 搜索 -
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <table class="table table-striped table-bordered table-hover " id="editable" name="editable">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">所属环境</th>
+                                        <th class="text-center">HOSTNAME</th>
+                                        <th class="text-center">IP</th>
+                                        <th class="text-center">USERNAME</th>
+                                        <th class="text-center">PASSWORD</th>
+                                        <th class="text-center">是否使用</th>
+                                        <th class="text-center">System version</th>
+                                        <th class="text-center">密码是否正确</th>
+                                        <th class="text-center">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for host in hosts_list %}
+                                    <tr>
+                                        <td class="text-center">{{host.env}}</td>
+                                        <td class="text-center">{{host.hostname}}</td>
+                                        <td class="text-center">{{host.ip}}</td>
+                                        <td class="text-center">{{host.username}}</td>
+                                        <td class="text-center">{{host.password}}</td>
+                                        <td class="text-center">{{host.is_used}}</td>
+                                        <td class="text-center">{{host.systeminfo}}</td>
+                                        <td class="text-center">{{host.passwd_result}}</td>
+                                        <td class="text-center">
+                                             <a class="btn btn-xs btn-info" title="edit host"
+                                               onclick="EditHostInfo('{{ url_for('asset.get_host_info', id=host.id) }}')">编辑
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="row">
+                                <div class="col-sm-6" style="float: right;margin-top: 0">
+                                    <ul class="pagination" style="float: right;margin-top: -20px;margin-bottom: -20px">
+                                        {{ pagination_widget(pagination, 'asset.manage_hosts', env_id=env_id, used_id=used_id, password_id=password_id, ip=ip) }}
+                                    </ul>
+                                </div>
+                            </div>
+
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+<!-- 信息修改确认: For edit host -->
+<div class="modal fade" id="editHostInfoFormModal">
+    <div class="modal-dialog">
+        <div class="modal-content message_align">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="ModalTitle"></h4>
+            </div>
+            <form id="editArticleTypeForm" method="post"
+                  action="{{ url_for('asset.edit_host_info') }}">
+                <div class="modal-body">
+                        <div class="form-group">
+                            {{ form2.hostname.label }}
+                            {{ form2.hostname(id='edithostname', class='form-control') }}
+                            {{ form2.ip.label }}
+                            {{ form2.ip(id='editip', class='form-control', required='') }}
+                            {{ form2.username.label }}
+                            {{ form2.username(id='editusername', class='form-control') }}
+                            {{ form2.password.label }}
+                            {{ form2.password(id='editpassword', class='form-control') }}
+
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button id="editHostCfmClick" type="submit" class="btn btn-success">确定</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+
+{% endblock %}
+

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <title>CMDB | Dashboard v.2</title>
+
+    {% block stylesheet %}
+        <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+        <link href="../static/font-awesome/css/font-awesome.css" rel="stylesheet">
+
+        <link href="../static/css/animate.css" rel="stylesheet">
+        <link href="../static/css/style.css" rel="stylesheet">
+        <link href="../static/css/sweetalert2.min.css" rel="stylesheet">
+        <link href="../static/css/select2.min.css" rel="stylesheet" />
+    {% endblock %}
+
+</head>
+
+<body>
+    <div id="wrapper">
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav metismenu" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <span>
+                                <img alt="image" class="img-circle" src="../static/img/profile_small.jpg" />
+                            </span>
+                            <a data-toggle="dropdown" class="dropdown-toggle">
+                                <span class="clear">
+                                    <span class="block m-t-xs"><strong class="font-bold">David Williams</strong></span>
+                                    <span class="text-muted text-xs block">Art Director <b class="caret"></b></span>
+                                </span>
+                            </a>
+
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                <li><a href="profile.html">Profile</a></li>
+                                <li><a href="contacts.html">Contacts</a></li>
+                                <li><a href="mailbox.html">Mailbox</a></li>
+                                <li class="divider"></li>
+                                <li><a href="login.html">Logout</a></li>
+                            </ul>
+                        </div>
+                        <div class="logo-element">CMDB</div>
+                    </li>
+
+
+                    <li id="index">
+                        <a href="{{ url_for('admin.index') }}"><i class="fa fa-dashboard"></i> <span class="nav-label">Dashboard</span><span class="label label-info pull-right"></span></a>
+                    </li>
+
+                    <li>
+                        <a><i class="fa fa-laptop"></i> <span class="nav-label">资产管理</span><span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level collapse" style="height: 0px;">
+                            <li class="search"> <a href="{{ url_for('asset.manage_hosts') }}">主机管理<span class="label label-info pull-right">160/160</span></a></li>
+                        </ul>
+                    </li>
+
+                        <li class="active">
+
+                            <a><i class="fa fa-edit"></i> <span class="nav-label">配置管理</span><span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level collapse" style="height: 0px;">
+                                <li class="env"> <a href="{{ url_for('config.env') }}">环境管理<span class="label label-info pull-right"></span></a></li>
+                                <li class="env"> <a href="{{ url_for('config.sub_system') }}">子系统管理<span class="label label-info pull-right"></span></a></li>
+                                <li class="files"> <a href="{{ url_for('config.conf_file') }}">配置文件管理<span class="label label-info pull-right"></span></a></li>
+                                <li class="iterm"> <a href="{{ url_for('config.key') }}">正常配置项管理<span class="label label-info pull-right"></span></a></li>
+                                <li class="iterm"> <a href="{{ url_for('config.key_value') }}">正常配置项值管理<span class="label label-info pull-right"></span></a></li>
+                                <li class="iterm"> <a href="{{ url_for('config.special_key') }}">特殊配置项管理<span class="label label-info pull-right"></span></a></li>
+                                <li class="iterm"> <a href="{{ url_for('config.special_key_value') }}">特殊配置项值管理<span class="label label-info pull-right"></span></a></li>
+                                <li class="iterm"> <a href="{{ url_for('config.conf_version') }}">生成配置<span class="label label-info pull-right"></span></a></li>
+                            </ul>
+                        </li>
+
+                    <li>
+                        <a href="{{ url_for('config.config') }}"><i class="fa fa-files-o"></i> <span class="nav-label">配置文件查看</span><span class="label label-info pull-right"></span></a>
+                    </li>
+
+                    <li>
+                        <a href="{{ url_for('config.config') }}"><i class="fa fa-table"></i> <span class="nav-label">需求管理</span><span class="label label-info pull-right"></span></a>
+                    </li>
+
+
+                </ul>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="gray-bg">
+            <div class="row border-bottom">
+                <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header">
+                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary"><i class="fa fa-bars"></i> </a>
+                    </div>
+
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li>
+                            <span class="m-r-sm text-muted welcome-message">Welcome to CMDB.</span>
+                        </li>
+                        <li>
+                            {% if current_user.is_authenticated %}
+                                <a href="{{ url_for('auth.logout') }}">
+                                    <i class="fa fa-sign-out"></i> Log out
+                                </a>
+                            {% else %}
+                                <a href="{{ url_for('auth.login') }}">
+                                    <i class="fa fa-sign-in"></i> Log in
+                                </a>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            {% block title_content %}
+            {% endblock %}
+
+            <div class="wrapper wrapper-content animated fadeInRight">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="ibox float-e-margins">
+
+                        {% for category, message in get_flashed_messages(with_categories=true) %}
+                            <div class="alert alert-{{ category }} alert-dismissable">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+
+                        {% block admin_content %}
+                        {% endblock %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="footer fixed">
+                <div class="pull-right">
+                    Version <strong>0.0.1</strong>
+                </div>
+                <div>
+                    <strong>Copyright</strong> CMDB &copy; 2016-2017
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {% block script %}
+        <script src="../static/js/jquery-2.1.1.js"></script>
+        <script src="../static/js/bootstrap.min.js"></script>
+        <script src="../static/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+        <script src="../static/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+        <!-- Custom and plugin javascript -->
+        <script src="../static/js/inspinia.js"></script>
+        <script src="../static/js/plugins/pace/pace.min.js"></script>
+        <script src="../static/js/admin.js"></script>
+        <script src="../static/js/sweetalert2.min.js"></script>
+        <script src="../static/js/select2.min.js"></script>
+
+
+    {% endblock %}
+
+
+</body>
+</html>

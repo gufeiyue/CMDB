@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+
+
+{% block title_content %}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>环境管理</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="{{ url_for('admin.index') }}">Dashbord</a>
+            </li>
+            <li>
+                <a>配置管理</a>
+            </li>
+            <li class="active">
+                <strong>环境列表</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+
+    </div>
+</div>
+{% endblock %}
+
+{% block admin_content %}
+
+    <div class="ibox float-e-margins" id="all">
+
+        <div class="ibox-title">
+            <h5> 环境信息列表</h5>
+            <div class="ibox-tools">
+                <a class="collapse-link">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+                <a class="close-link">
+                    <i class="fa fa-times"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="ibox-content">
+                <div class="col-sm-1" style="padding-left: 0">
+                    <a href="{{ url_for('config.env_add') }}" class="btn btn-sm btn-primary"> 添加环境 </a>
+                </div>
+
+
+                <table class="table table-striped table-bordered table-hover dataTable" id="editable" name="editable">
+                    <thead>
+
+                        <tr>
+                            <th class="text-center">环境</th>
+                            <th class="text-center">环境简介</th>
+                            <th class="text-center">当前版本</th>
+                            <th class="text-center">上次生成时间</th>
+                            <th class="text-center">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for env_list in env_lists %}
+                        <tr class="gradeA odd" role="row">
+                            <td class="center">{{ env_list.env }}</td>
+                            <td class="center">{{ env_list.description }}</td>
+                            <td class="center">{{ env_list.version }}</td>
+                            <td class="text-center" style="width: 150px">{{ env_list.update_time }}</td>
+                            <td class="text-center" style="width: 300px">
+                                <a href="{{ url_for('config.env_edit', env_id=env_list.id) }}" class="btn btn-xs btn-info center" style="margin-bottom: 0px" type="button">
+                                    <i class="fa fa-edit"></i> Edit
+                                </a>
+                                <button id="{{ env_list.id }}" class="btn btn-xs btn-danger center delete_env" style="margin-bottom: 0px"><i class="fa fa-edit"></i> Delete</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+
+{% block script %}
+    {{ super() }}
+
+    <script>
+        $(document).ready(function(){
+            $('.delete_env').click(function () {
+                window.id = $(this).attr('id');
+                window.path = $(this).parent().parent();
+                swal({
+                  title: 'Are you sure?',
+                  text: "You won't be able to revert this!",
+                  type: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Yes, delete it!'
+                }).then(function () {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/config/env_del',
+                        data: JSON.stringify({"data":id}),
+                        contentType: 'application/json; charset=UTF-8',
+                        success: function (data) {
+                        swal(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                          )
+                        }
+                    });
+                    path.slideUp();
+                })
+
+        });
+
+    });
+    </script>
+
+
+{% endblock %}

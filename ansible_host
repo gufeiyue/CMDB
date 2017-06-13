@@ -1,0 +1,1 @@
+172.16.0.112 ansible_ssh_user=localadmin    ansible_ssh_pass='123456'       ansible_sudo_pass='123456'

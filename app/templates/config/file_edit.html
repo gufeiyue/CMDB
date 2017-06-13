@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+
+
+
+{% block title_content %}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>配置文件管理</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="{{ url_for('admin.index') }}">Dashbord</a>
+            </li>
+            <li>
+                <a>配置管理</a>
+            </li>
+            <li class="active">
+                <strong>修改配置文件</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+
+    </div>
+</div>
+{% endblock %}
+
+
+{% block admin_content %}
+
+    <div id="ibox-content" class="ibox-title">
+        <h5> 填写资产基本信息 </h5>
+        <div class="ibox-tools">
+            <a class="collapse-link">
+                <i class="fa fa-chevron-up"></i>
+            </a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <i class="fa fa-wrench"></i>
+            </a>
+            <a class="close-link">
+                <i class="fa fa-times"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="ibox-content">
+        <div class="panel blank-panel">
+            <div class="panel-options">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="/jasset/asset/add/" class="text-center"><i class="fa fa-laptop"></i> 修改文件 </a></li>
+                </ul>
+            </div>
+            <div class="panel-body">
+                <div class="tab-content">
+                        <form class="form-horizontal" role="form" method="POST" action="">
+                        {{ form.hidden_tag() }}
+
+                        <div class="hr-line-dashed"></div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">配置文件名</label>
+                            <div class="col-sm-10">
+                                {{ form.conf_file(class='form-control', placeholder='Config Name', required='') }}
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">配置文件说明</label>
+                            <div class="col-sm-10">
+                                {{ form.description(class='form-control', placeholder='Config description') }}
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button class="btn btn-primary" type="submit" id="submit"> 提交 </button>
+                            </div>
+                        </div>
+
+                        </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

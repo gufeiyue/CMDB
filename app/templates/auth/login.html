@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CMDB | Login</title>
+
+    <link href="../../static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../static/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../static/css/animate.css" rel="stylesheet">
+    <link href="../../static/css/style.css" rel="stylesheet">
+
+
+</head>
+
+<body class="gray-bg">
+    <div class="text-center middle-box ">
+        <img src="../../static/img/maizi-logo.png" height="180" width="180">
+    </div>
+
+
+    <div class="middle-box text-center loginscreen animated fadeInDown">
+        <div>
+
+            <h3>Welcome to CMDB</h3>
+            <div>
+            {% for category, message in get_flashed_messages(with_categories=true) %}
+                <div class="alert alert-{{ category }} alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+            </div>
+            {% from "_formhelpers.html" import render_field %}
+            <form class="m-t" role="form"  method="POST" action="{{ url_for('auth.login') }}">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.email(class='form-control', placeholder='Email', required='') }}
+                    {{ render_field(form.email) }}
+                </div>
+                <div class="form-group">
+                    {{ form.password(class='form-control', placeholder='Password', required='') }}
+                    {{ render_field(form.password) }}
+                </div>
+                <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
+
+{#                <a href="login.html#"><small>Forgot password?</small></a>#}
+{#                <p class="text-muted text-center"><small>Do not have an account?</small></p>#}
+{#                <a class="btn btn-sm btn-white btn-block" href="{{ url_for('auth.register') }}">Create an account</a>#}
+            </form>
+        </div>
+    </div>
+
+    <!-- Mainly scripts -->
+    <script src="../../static/js/jquery-2.1.1.js"></script>
+    <script src="../../static/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

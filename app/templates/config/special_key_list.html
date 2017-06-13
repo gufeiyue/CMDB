@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% from '_pagination.html' import pagination_widget %}
+
+
+
+
+{% block title_content %}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>特殊配置项管理</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a href="{{ url_for('admin.index') }}">Dashbord</a>
+            </li>
+            <li>
+                <a>配置管理</a>
+            </li>
+            <li class="active">
+                <strong>特殊配置项列表</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-lg-2">
+
+    </div>
+</div>
+{% endblock %}
+
+{% block admin_content %}
+
+    <div class="ibox float-e-margins" id="all">
+        <div class="ibox-title">
+            <h5> 特殊配置项列表</h5>
+            <div class="ibox-tools">
+                <a class="collapse-link">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+                <a class="close-link">
+                    <i class="fa fa-times"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="ibox-content">
+                <div class="col-sm-1" style="padding-left: 0">
+                    <a href="{{ url_for('config.special_key_add') }}" class="btn btn-sm btn-primary"> 添加配置项 </a>
+                </div>
+                <form class="form-inline" method="post" action="">
+                {{ form.hidden_tag() }}
+                <div class="col-sm-9" style="padding-left: 0px">
+                    <label>
+                        {{ form.systems(class='form-control m-b input-sm', id='system_id') }}
+                    </label>
+                    <label>
+                        {{ form.files(class='form-control m-b input-sm', id='conf_file') }}
+                    </label>
+                </div>
+
+                <div class="col-sm-2" style="padding-right: 0px">
+                     <div class="input-group inline-group" style="width:500px; float: right; padding-right: 0px;">
+                            {{ form.keys(class='form-control m-b input-sm', placeholder='Please enter key or git branch', id='conf_key') }}
+                        <div class="input-group-btn" style="width: 60px">
+                            <button id="search_btn"  type="submit" class="btn btn-sm btn-primary search-btn">
+                                - 搜索 -
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                </form>
+                <table class="table table-striped table-bordered table-hover dataTable" id="editable" name="editable">
+                    <thead>
+
+                        <tr>
+                            <th class="text-center" style="vertical-align: middle">子系统</th>
+                            <th class="text-center" style="vertical-align: middle">文件名</th>
+                            <th class="text-center" style="vertical-align: middle">key</th>
+                            <th class="text-center" style="vertical-align: middle">jira 编号</th>
+                            <th class="text-center" style="vertical-align: middle">分支号</th>
+                            <th class="text-center" style="vertical-align: middle">说明</th>
+                            <th class="text-center" style="vertical-align: middle">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for key_list in key_lists %}
+                        <tr class="gradeA odd" role="row">
+                            <td class="text-center" style="vertical-align: middle">{{ key_list.sub_system }}</td>
+                            <td class="text-center" style="vertical-align: middle">{{ key_list.conf_file }}</td>
+                            <td class="text-center" style="vertical-align: middle">{{ key_list.conf_key }}</td>
+                            <td class="text-center" style="vertical-align: middle">{{ key_list.jira_id }}</td>
+                            <td class="text-center" style="vertical-align: middle">{{ key_list.branch_name }}</td>
+                            <td class="text-center" style="vertical-align: middle">{{ key_list.description }}</td>
+                            <td class="text-center" style="vertical-align: middle">
+                                <a href="{{ url_for('config.special_key_edit', key_id=key_list.id) }}" class="btn btn-xs btn-info center" style="margin-bottom: 0px" type="button">
+                                    <i class="fa fa-edit"></i> Edit Key
+                                </a>
+
+                                <button id="{{ key_list.id }}" class="btn btn-xs btn-danger center delete_key" style="margin-bottom: 0px"><i class="fa fa-edit"></i> Delete</button>
+                            </td>
+                        </tr>
+                     {% endfor %}
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-sm-6" style="float: right;margin-top: 0">
+                        <ul class="pagination" style="float: right;margin-top: -20px;margin-bottom: -20px">
+                            {{ pagination_widget(pagination, 'config.special_key', system_id=system_id, conf_file=conf_file, conf_key=conf_key) }}
+                        </ul>
+                    </div>
+                </div>
+
+        </div>
+    </div>
+
+
+{% endblock %}
+
+
+
+{% block script %}
+    {{ super() }}
+
+    <script>
+        $(document).ready(function(){
+            $('.delete_key').click(function () {
+                window.id = $(this).attr('id');
+                window.path = $(this).parent().parent();
+                swal({
+                  title: 'Are you sure?',
+                  text: "You won't be able to revert this!",
+                  type: 'warning',
+                  showCancelButton: true,
+                  confirmButtonColor: '#3085d6',
+                  cancelButtonColor: '#d33',
+                  confirmButtonText: 'Yes, delete it!'
+                }).then(function () {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/config/key_del',
+                        data: JSON.stringify({"data":id}),
+                        contentType: 'application/json; charset=UTF-8',
+                        success: function (data) {
+                        swal(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                          )
+                        }
+                    });
+                    path.slideUp();
+                });
+        });
+
+    });
+    </script>
+
+
+{% endblock %}

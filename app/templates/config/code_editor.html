@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+
+{% block stylesheet %}
+    {{ super() }}
+
+    <link href="../../static/css/plugins/codemirror/codemirror.css" rel="stylesheet">
+    <link href="../../static/css/plugins/codemirror/ambiance.css" rel="stylesheet">
+    <link href="../../static/css/plugins/jsTree/style.min.css" rel="stylesheet">
+{% endblock %}
+
+
+{% block admin_content %}
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+                    <h2>Config</h2>
+                    <ol class="breadcrumb">
+                        <li>
+                            <a href="{{ url_for('admin.index') }}">Dashborad</a>
+                        </li>
+                        <li class="active">
+                            <strong>Config</strong>
+                        </li>
+                    </ol>
+                </div>
+                <div class="col-lg-2">
+
+                </div>
+            </div>
+
+    <div id="container"></div>
+
+
+        <div class="wrapper wrapper-content  animated fadeInRight">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>Config tree</h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up"></i>
+                                </a>
+                                <a class="close-link">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="height: 640px; overflow: auto">
+
+                            <div id="using_json"></div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-8">
+                    <div class="ibox ">
+                        <div class="ibox-title">
+                            <h5>The contents of the configuration file</h5>
+                        </div>
+                        <div class="ibox-content">
+<textarea id="code1">
+</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
+
+{% block script %}
+    {{ super() }}
+
+    <script src="../../static/js/plugins/jsTree/jstree.min.js"></script>
+    <!-- CodeMirror -->
+    <script src="../../static/js/plugins/codemirror/codemirror.js"></script>
+    <script src="../../static/js/plugins/codemirror/mode/javascript/javascript.js"></script>
+
+
+    <script>
+        $(document).ready(function(){
+
+        var editor_one = CodeMirror.fromTextArea(document.getElementById("code1"), {
+             lineNumbers: true,
+             matchBrackets: true,
+             styleActiveLine: true,
+             theme:"ambiance"
+         });
+
+
+        $('#using_json').jstree({
+            'core' : {
+                'data': {
+                    "url" : "/config/config_tree",
+                    "dataType" : "json"
+                    }
+                }
+            })
+
+
+     .bind('changed.jstree',function(e, data) {
+         var path = (data.instance.get_path(data.selected[0],"/",0));
+
+     $.ajax({
+         type: 'POST',
+         url : '/config/config_text',
+         data: JSON.stringify({"data":path}),
+         contentType: 'application/json; charset=UTF-8',
+         success: function(data) {
+             $(".CodeMirror").remove();
+             var text = $('#code1');
+             text.empty();
+             text.append(data.test);
+             var editor_one = CodeMirror.fromTextArea(document.getElementById("code1"), {
+                 lineNumbers: true,
+                 matchBrackets: true,
+                 styleActiveLine: true,
+                 theme:"ambiance"
+             });
+             editor_one.setOption("readOnly", true)
+
+         }
+    })
+    })
+
+    });
+    </script>
+
+
+{% endblock %}

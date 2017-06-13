@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block admin_content %}
+
+    <div class="wrapper wrapper-content">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-success pull-right">Hosts</span>
+                        <h5>主机总数</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">
+                            <a href="{{ url_for('asset.manage_hosts', used_id="Y") }}"> {{ used_count }} </a>
+                        </h1>
+                        <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>
+                        <small>All host</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <span class="label label-danger pull-right">Error</span>
+                        <h5>密码错误</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <h1 class="no-margins">
+                            <a href="{{ url_for('asset.manage_hosts', password_id="error", env_id="-1", used_id="Y", page=1) }}"> {{ passwd_count }} </a>
+                        </h1>
+                        <div class="stat-percent font-bold text-danger">38% <i class="fa fa-level-down"></i></div>
+                        <small>Password error</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

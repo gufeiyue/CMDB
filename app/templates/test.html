@@ -1,0 +1,130 @@
+
+<link rel="stylesheet" href="https://o.qcloud.com/static_api/v3/assets/jstree-3.1.1/dist/themes/default/style.min.css" />
+<script src="https://o.qcloud.com/static_api/v3/assets/js/jquery-1.10.2.min.js"></script>
+<script src="https://o.qcloud.com/static_api/v3/assets/jstree-3.1.1/dist/jstree.min.js"></script>
+
+<div id="plugin11_demo7" class="demo"></div>
+<script type="text/javascript">
+    // 综合例子
+    $('#plugin11_demo7').jstree({
+        "core": {
+            "check_callback": true,
+            'data': {
+                "url": function (node) {
+                    return node.id === '#' ?
+                        'ajax_demo_roots.json' : 'ajax_demo_children.json';
+                }
+            }
+        },
+        // 配置节点类型
+        "types": {
+            "folder": {
+                "icon": "fa fa-folder",
+                "valid_children": ["file"]
+            },
+            "file": {
+                "icon": "fa fa-file",
+                "valid_children": []
+            }
+        },
+        // 配置右键菜单
+        "contextmenu": {
+            "items": function (node) {
+                var tmp = $.jstree.defaults.contextmenu.items();
+                delete tmp.create.action;
+                delete tmp.ccp; //删除复制和粘贴功能
+
+                //重命名配置
+                tmp.rename.label = '重命名';
+                tmp.rename.icon = 'fa fa-pencil-square-o';
+                tmp.rename.action = function(data){
+                    var inst = $.jstree.reference(data.reference);
+                    var obj = inst.get_node(data.reference);
+                    var objName = obj.text;
+                    inst.edit(obj, objName, function(data){
+                        var newName = data.text;
+                        data.id = 'new_node';
+                        console.log(data);
+                        // do ajax
+                    });
+                }
+
+                //删除配置
+                tmp.remove.label = '删除';
+                tmp.remove.icon = 'fa fa-trash-o';
+                tmp.remove.action = function(data){
+                    var inst = $.jstree.reference(data.reference);
+                    var obj = inst.get_node(data.reference);
+                    inst.delete_node(obj);
+                    console.log('删除');
+                    // do ajax
+                }
+
+                //创建配置
+                tmp.create.label = '创建';
+                tmp.create.icon = 'fa fa-plus-square ';
+
+                tmp.create.submenu = {
+                    create_folder: {
+                        separator_after: false,
+                        label: "目录",
+                        icon: "fa fa-folder",
+                        action: function (data) {
+                            var inst = $.jstree.reference(data.reference);
+                            var obj = inst.get_node(data.reference);
+                            inst.create_node(obj, {
+                                type: "default",
+                                icon: "fa fa-folder",
+                            }, "last", function (new_node) {
+                                console.log('创建成功');
+                                setTimeout(function () {
+                                    inst.edit(new_node, '新建文件夹', function(){
+                                        console.log('创建并命名成功');
+                                        // do ajax
+                                    });
+                                }, 0);
+                            });
+                        }
+                    },
+                    create_file: {
+                        label: "文件",
+                        icon: "fa fa-file",
+                        action: function (data) {
+                            console.log(data);
+                            var inst = $.jstree.reference(data.reference);
+                            var obj = inst.get_node(data.reference);
+
+                            console.log(inst);
+                            inst.create_node(obj, {
+                                type: "file",
+                                icon: "fa fa-file"
+                            }, "last", function (new_node) {
+                                console.log('创建成功');
+                                setTimeout(function () {
+                                    inst.edit(new_node, '新建文件', function(){
+                                        console.log('新建并命名成功');
+                                        //ajax
+                                    });
+                                }, 0);
+                            });
+                        }
+                    },
+                };
+                //如果选中文件，则不显示创建操作
+                if (this.get_type(node) === "file") {
+                    delete tmp.create;
+                }
+
+                return tmp;
+            }
+        },
+        'unique': {
+            'duplicate': function (name, counter) {
+                return name + ' ' + counter;
+            }
+        },
+        'plugins': ['state', 'dnd', 'types', 'contextmenu', 'unique']
+    }).on('changed.jstree', function (e, data) {
+        //do
+    });
+</script>
